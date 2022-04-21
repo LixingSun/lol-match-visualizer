@@ -1,11 +1,21 @@
-import type { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
+import matchData from './match.json'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-const Home: NextPage = () => {
+interface IHero {
+  id: number;
+  name: string;
+}
+
+interface HomeProps {
+  heroes: IHero[];
+}
+
+const Home: NextPage<HomeProps> = ({ heroes }) => {
   return (
-    <div className={styles.container}>
+    <>
       <Head>
         <title>LOL Match Visualizer</title>
         <meta name="description" content="A pretty web page to visualize a League of Legend match based on data from RIOT." />
@@ -13,8 +23,14 @@ const Home: NextPage = () => {
       </Head>
 
       <h1 className={styles.pageTitle}>
-        League of Legend Match Visulizer
+        League of Legend Match Visualizer
       </h1>
+
+      {
+        heroes.map(hero => {
+          return <Image key={hero.id} src={`http://ddragon.leagueoflegends.com/cdn/12.7.1/img/champion/${hero.name}.png`} alt={hero.name} width={128} height={128} />
+        })
+      }
 
       <footer className={styles.footer}>
         <a
@@ -25,8 +41,21 @@ const Home: NextPage = () => {
           Github
         </a>
       </footer>
-    </div>
+    </>
   )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const heroes: IHero[] = matchData.info.participants.map(entity => ({
+    id: entity.championId,
+    name: entity.championName
+  }));
+
+  return {
+    props: {
+      heroes
+    },
+  }
 }
 
 export default Home
