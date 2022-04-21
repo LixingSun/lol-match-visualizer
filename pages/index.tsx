@@ -22,15 +22,37 @@ const Home: NextPage<HomeProps> = ({ heroes }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1 className={styles.pageTitle}>
-        League of Legend Match Visualizer
-      </h1>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageHeaderTitle}>
+          League of Legend Match Visualizer
+        </h1>
+      </header>
 
-      {
-        heroes.map(hero => {
-          return <Image key={hero.id} src={`http://ddragon.leagueoflegends.com/cdn/12.7.1/img/champion/${hero.name}.png`} alt={hero.name} width={128} height={128} />
-        })
-      }
+      <div className={styles.pageSection}>
+        <h2 className={styles.pageSectionTitle}>
+          Player Statistics
+        </h2>
+        <div>  
+          {
+            heroes.map(hero => {
+              return <Image key={hero.id} src={`http://ddragon.leagueoflegends.com/cdn/12.7.1/img/champion/${hero.name}.png`} alt={hero.name} width={64} height={64} />
+            })
+          }
+        </div>
+      </div>
+
+      <div className={styles.pageSection}>
+        <h2 className={styles.pageSectionTitle}>
+          Team Gold
+        </h2>
+      </div>
+
+      <div className={styles.pageSection}>
+        <h2 className={styles.pageSectionTitle}>
+          Build
+        </h2>
+      </div>
+      
 
       <footer className={styles.footer}>
         <a
