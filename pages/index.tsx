@@ -22,8 +22,8 @@ const Home: NextPage<HomeProps> = ({ heroes }) => {
 
     scroll();
 
-    let lastIndex,
-      activeIndex = 0;
+    let lastIndex: number;
+    let activeIndex = 0;
 
     //This is where most of the magic happens. Every time the user scrolls, we receive a new index. First, we find all the irrelevant sections, and reduce their opacity.
     scroll.on("active", function (index) {

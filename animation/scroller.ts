@@ -51,10 +51,7 @@ export const scroller = () => {
     }
 
     //The code here adds an event listener to the dispatcher.
-    scroll.container = function (specifiedContainer: d3.Selection<d3.BaseType, unknown, HTMLElement, any>) {
-        if (arguments.length === 0) {
-            return container
-        }
+    scroll.container = function (specifiedContainer: d3.Selection<d3.BaseType, unknown, HTMLElement, any>) {        
         container = specifiedContainer
         return scroll
     }
