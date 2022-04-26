@@ -1,7 +1,6 @@
 import type { GetStaticProps, NextPage } from "next";
 import matchData from "./match.json";
 import Head from "next/head";
-import Image from "next/image";
 import * as d3 from "d3";
 import styles from "../styles/Home.module.css";
 import { scroller } from "../animation/scroller";
@@ -71,12 +70,10 @@ const Home: NextPage<HomeProps> = ({ heroes }) => {
         <div>
           {heroes.map((hero) => {
             return (
-              <Image
+              <img
                 key={hero.id}
                 src={`http://ddragon.leagueoflegends.com/cdn/12.7.1/img/champion/${hero.name}.png`}
                 alt={hero.name}
-                width={64}
-                height={64}
               />
             );
           })}
