@@ -25,8 +25,15 @@
   flex-grow: 1;
 }
 
+.sections {
+  display: inline-block;
+  display: relative;
+  width: 400px;
+  padding-bottom: 200px;
+}
+
 .pageSection {
-  height: 600px;
+  height: 400px;
   display: flex;
   padding: 5% 15%;
   align-items: center;
@@ -34,4 +41,10 @@
 
 .pageSectionTitle {
   font-size: 2rem;
+}
+
+.visualization {
+  display: inline-block;
+  position: fixed;
+  z-index: 99;
 }

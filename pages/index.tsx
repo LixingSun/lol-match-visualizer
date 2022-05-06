@@ -15,6 +15,44 @@ interface HomeProps {
   heroes: IHero[];
 }
 
+const setupVisualization = (heroes: IHero[]) => {
+  d3.select("#visualization")
+  .selectAll("image")
+  .data(heroes)
+  .join("image")
+  .attr(
+    "href",
+    (d) =>
+      `http://ddragon.leagueoflegends.com/cdn/12.7.1/img/champion/${d.name}.png`
+  )
+  .attr("height", 32)
+  .attr("width", 32)
+  .attr("x", 0)
+  .attr("y", (d, i) => i * 40);
+};
+
+const playerSectionAnimation = (heroes: IHero[]) => {
+  d3.select("#visualization")
+    .selectAll("image")
+    .data(heroes)
+    .join("image")
+    .transition()
+    .attr("x", 0)
+    .attr("y", (d, i) => i * 40);
+};
+
+const teamSectionAnimation = (heroes: IHero[]) => {
+  d3.select("#visualization")
+    .selectAll("image")
+    .data(heroes)
+    .join("image")
+    .transition()
+    .attr("x", (d, i) => (i % 5) * 40)
+    .attr("y", (d, i) => i < 5 ? 0 : 200);
+};
+
+const activationFunctions = [playerSectionAnimation, teamSectionAnimation];
+
 const Home: NextPage<HomeProps> = ({ heroes }) => {
   useEffect(() => {
     let scroll = scroller().container(d3.select("body"));
@@ -23,6 +61,8 @@ const Home: NextPage<HomeProps> = ({ heroes }) => {
 
     let lastIndex: number;
     let activeIndex = 0;
+
+    setupVisualization(heroes);
 
     //This is where most of the magic happens. Every time the user scrolls, we receive a new index. First, we find all the irrelevant sections, and reduce their opacity.
     scroll.on("active", function (index) {
@@ -43,10 +83,11 @@ const Home: NextPage<HomeProps> = ({ heroes }) => {
       );
       scrolledSections.forEach((i) => {
         console.log(i);
+        activationFunctions[i](heroes);
       });
       lastIndex = activeIndex;
     });
-  }, []);
+  }, [heroes]);
 
   return (
     <>
@@ -65,28 +106,17 @@ const Home: NextPage<HomeProps> = ({ heroes }) => {
         </h1>
       </header>
 
-      <div className={`page-section ${styles.pageSection}`}>
-        <h2 className={styles.pageSectionTitle}>Player Statistics</h2>
-        <div>
-          {heroes.map((hero) => {
-            return (
-              <img
-                key={hero.id}
-                src={`http://ddragon.leagueoflegends.com/cdn/12.7.1/img/champion/${hero.name}.png`}
-                alt={hero.name}
-              />
-            );
-          })}
+      <div className={styles.sections}>
+        <div className={`page-section ${styles.pageSection}`}>
+          <h2 className={styles.pageSectionTitle}>Player Statistics</h2>
+        </div>
+
+        <div className={`page-section ${styles.pageSection}`}>
+          <h2 className={styles.pageSectionTitle}>Team Gold</h2>
         </div>
       </div>
 
-      <div className={`page-section ${styles.pageSection}`}>
-        <h2 className={styles.pageSectionTitle}>Team Gold</h2>
-      </div>
-
-      <div className={`page-section ${styles.pageSection}`}>
-        <h2 className={styles.pageSectionTitle}>Build</h2>
-      </div>
+      <svg id="visualization" className={styles.visualization} width="600" height="400"></svg>
 
       <footer className={styles.footer}>
         <a
