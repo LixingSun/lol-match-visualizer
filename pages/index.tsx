@@ -19,6 +19,9 @@ const positionPriority: individualPositions[] = [
 const championImageSize = 32;
 const championImageSizeWithInterval = championImageSize + 8;
 
+const maxBarSize = 350;
+const barHeight = 20;
+
 interface IHero {
   id: number;
   championName: string;
@@ -48,7 +51,7 @@ const setupVisualization = (heroes: IHero[]) => {
     .attr("height", championImageSize)
     .attr("width", championImageSize)
     .attr("x", 0)
-    .attr("y", (d, i) => i * (championImageSize + 8));
+    .attr("y", (d, i) => i * championImageSizeWithInterval);
 
   visualization
     .selectAll("text.summonerName")
@@ -56,8 +59,49 @@ const setupVisualization = (heroes: IHero[]) => {
     .join("text")
     .attr("class", "summonerName")
     .text((d) => d.summonerName)
-    .attr("x", 40)
-    .attr("y", (d, i) => i * (championImageSize + 8) + 20);
+    .attr("x", championImageSizeWithInterval)
+    .attr(
+      "y",
+      (d, i) =>
+        i * championImageSizeWithInterval + championImageSizeWithInterval / 2
+    );
+  
+  const damageRecords: number[] = heroes.map(
+    (d) => d.totalDamageDealtToChampions
+  );
+  const damageX = d3
+    .scaleLinear()
+    .domain([0, d3.max(damageRecords) || 0])
+    .range([0, maxBarSize]);
+
+  visualization
+    .selectAll("rect.damageBar")
+    .data(heroes)
+    .join("rect")
+    .attr("class", "damageBar")
+    .attr("height", 20)
+    .attr("width", (d) => damageX(d.totalDamageDealtToChampions))
+    .attr("x", championImageSizeWithInterval + 120)
+    .attr(
+      "y",
+      (d, i) =>
+        i * championImageSizeWithInterval + (championImageSize - barHeight) / 2
+    )
+    .style("fill", (d) => (d.teamId === 100 ? "blue" : "red"));
+
+    visualization
+    .selectAll("text.damageBarLabel")
+    .data(heroes)
+    .join("text")
+    .attr("class", "damageBarLabel")
+    .attr("x", (d) => damageX(d.totalDamageDealtToChampions) + championImageSizeWithInterval + 130)
+    .attr(
+      "y",
+      (d, i) =>
+        i * championImageSizeWithInterval + 20
+    )
+    .style("font-size", 12)
+    .text(d => d.totalDamageDealtToChampions)
 };
 
 const playerSectionAnimation = (heroes: IHero[]) => {
@@ -82,6 +126,30 @@ const playerSectionAnimation = (heroes: IHero[]) => {
       (d, i) =>
         i * championImageSizeWithInterval + championImageSizeWithInterval / 2
     );
+
+    const damageRecords: number[] = heroes.map(
+      (d) => d.totalDamageDealtToChampions
+    );
+    const damageX = d3
+      .scaleLinear()
+      .domain([0, d3.max(damageRecords) || 0])
+      .range([0, maxBarSize]);
+
+    visualization
+    .selectAll("rect.damageBar")
+    .data(heroes)
+    .join("rect")
+    .transition()
+    .delay(500)
+    .attr("width", (d) => damageX(d.totalDamageDealtToChampions))
+
+    visualization
+    .selectAll("text.damageBarLabel")
+    .data(heroes)
+    .join("text")
+    .transition()
+    .delay(500)
+    .attr("opacity", 1)
 };
 
 const teamSectionAnimation = (heroes: IHero[]) => {
@@ -92,6 +160,7 @@ const teamSectionAnimation = (heroes: IHero[]) => {
     .data(heroes)
     .join("image")
     .transition()
+    .delay(500)
     .attr("x", (d, i) => (i % 5) * 120)
     .attr("y", (d, i) => (i < 5 ? 0 : 200));
 
@@ -100,6 +169,7 @@ const teamSectionAnimation = (heroes: IHero[]) => {
     .data(heroes)
     .join("text")
     .transition()
+    .delay(500)
     .attr("x", (d, i) => (i % 5) * 120)
     .attr("y", (d, i) =>
       i < 5
@@ -108,6 +178,20 @@ const teamSectionAnimation = (heroes: IHero[]) => {
           championImageSizeWithInterval +
           championImageSizeWithInterval / 2
     );
+
+    visualization
+    .selectAll("rect.damageBar")
+    .data(heroes)
+    .join("rect")
+    .transition()
+    .attr("width", 0)
+
+    visualization
+    .selectAll("text.damageBarLabel")
+    .data(heroes)
+    .join("text")
+    .transition()
+    .attr("opacity", 0)
 };
 
 const activationFunctions = [playerSectionAnimation, teamSectionAnimation];
